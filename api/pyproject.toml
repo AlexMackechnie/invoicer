@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "reference_app"
+name = "invoicer_api"
 description = "This is a simple reference Python application using pyproject.toml."
 classifiers = ["Private :: Do Not Upload"]
 version = "0.0.1"
