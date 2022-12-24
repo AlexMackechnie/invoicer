@@ -1,0 +1,9 @@
+curl -X POST -H "Content-Type: application/json" -d '{
+    "template_name": "template_1",
+    "name": "alex",
+    "address": "this is my address",
+    "payment_details": "01-00-01 12341234",
+    "send_to": "person",
+    "amount": 250.00,
+    "description": "random_gig"   
+}' http://localhost:5001/template
