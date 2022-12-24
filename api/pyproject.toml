@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reference_app"
+description = "This is a simple reference Python application using pyproject.toml."
+classifiers = ["Private :: Do Not Upload"]
+version = "0.0.1"
+dependencies = [
+    "requests==2.28.1",
+    "Flask==2.2.2"
+]
+requires-python = ">=3.9"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest"
+]
+
