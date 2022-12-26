@@ -2,3 +2,4 @@ venv
 nohup.out
 build
 *egg-info*
+*.pdf*

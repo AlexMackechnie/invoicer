@@ -1,12 +1,8 @@
 from dataclasses import dataclass
+from invoicer_api.model.invoice import Invoice
 
 @dataclass
 class Template:
     template_name: str
-    name: str
-    address: str
-    payment_details: str
-    send_to: str
-    amount: float
-    description: str
+    invoice: Invoice
 
