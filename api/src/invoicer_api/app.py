@@ -1,11 +1,53 @@
-from flask import Flask, request
+from flask import Flask, request, url_for, render_template, redirect, session
 from invoicer_api.model.template import Template
 from invoicer_api.model.invoice import Invoice
 import sqlite3
 from fpdf import FPDF
+from authlib.integrations.flask_client import OAuth
+import os
 
 
 app = Flask(__name__)
+app.secret_key = os.environ["FLASK_APP_SECRET_KEY"]
+oauth = OAuth(app)
+
+
+oauth.register(
+    name="github",
+    client_id="5362969895ac3af06940",
+    client_secret=os.environ["GITHUB_CLIENT_SECRET"],
+    access_token_url="https://github.com/login/oauth/access_token",
+    access_token_params=None,
+    authorize_url="https://github.com/login/oauth/authorize",
+    authorize_params=None,
+    api_base_url="https://api.github.com",
+    client_kwargs={"scope": "openid profile email"}
+)
+
+
+@app.route('/login')
+def login():
+    github = oauth.create_client('github')
+    redirect_uri = url_for('authorize', _external=True)
+    return github.authorize_redirect(redirect_uri)
+
+
+@app.route('/authorize')
+def authorize():
+    github = oauth.create_client('github')
+    token = github.authorize_access_token()
+    resp = github.get('user', token=token)
+    profile = resp.json()
+    session['profile'] = profile
+    print(f"PROFILE: {profile}")
+    return redirect('/')
+
+
+@app.route('/')
+def entry_point():
+    if not session.get('profile', ''):
+        return redirect('/login')
+    return f"<h1>Helllllloooooo {session['profile']['name']}!🤘</h1>"
 
 
 @app.route("/template", methods = ['POST'])
@@ -59,7 +101,7 @@ def create_invoice_from_template():
         request_data["send_to"],
         request_data["amount"],
         request_data["description"],
-    )  
+    )
 
     pdf = FPDF()
     pdf.add_page()
