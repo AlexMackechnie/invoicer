@@ -13,6 +13,7 @@ def create_template():
     request_data = request.get_json()
     invoice = Invoice(
         request_data["name"],
+        request_data["email"],
         request_data["address"],
         request_data["payment_details"],
         request_data["send_to"],
@@ -27,7 +28,7 @@ def create_template():
     conn = sqlite3.connect("../db/invoicer.db")
     cur = conn.cursor()
 
-    cur.execute("INSERT INTO template (template_name, name, address, payment_details, send_to, amount, description) VALUES (?, ?, ?, ?, ?, ?, ?)", (template.template_name, template.invoice.name, template.invoice.address, template.invoice.payment_details, template.invoice.send_to, template.invoice.amount, template.invoice.description))
+    cur.execute("INSERT INTO template (template_name, name, email, address, payment_details, send_to, amount, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (template.template_name, template.invoice.email, template.invoice.name, template.invoice.address, template.invoice.payment_details, template.invoice.send_to, template.invoice.amount, template.invoice.description))
 
     conn.commit()
 
@@ -52,6 +53,7 @@ def create_invoice_from_template():
     request_data = request.get_json()
     template = Invoice(
         request_data["name"],
+        request_data["email"],
         request_data["address"],
         request_data["payment_details"],
         request_data["send_to"],
@@ -61,15 +63,18 @@ def create_invoice_from_template():
 
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_margin(2)
+    pdf.set_margin(10)
     pdf.set_font('helvetica', size=12)
     pdf.write_html(
         f"""
         <h1> INVOICE</h1>
+        <p><b>To</b>: {template.send_to} <p>
+        <br/><br/>
         <p><b>Name</b>: {template.name}</p>
+        <p><b>Email</b>: {template.email}</p>
         <p><b>Address</b>: {template.address}</p>
         <p><b>Payment Details</b>: {template.payment_details}</p>
-        <table>
+        <table style="margin-left:auto; margin-right:auto; text-align:center;" border="1">
           <tr>
             <th width="75%">Description</th>
             <th width="25%">Amount</th>
@@ -79,10 +84,11 @@ def create_invoice_from_template():
             <td>£{template.amount}</td>
           </tr>
         </table>
+        <font size="7"><p><strong>This template was generated using Invoicer: <a href="https://github.com/AlexMackechnie/invoicer">https://github.com/AlexMackechnie/invoicer</a></strong></p></font>
         """
     )
-    #pdf.cell(txt="hello world")
+
     pdf.output("hello_world.pdf")
 
-    return str(template.__dict__)
+    return "DONE"
 
