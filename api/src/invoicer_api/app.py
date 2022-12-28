@@ -4,6 +4,7 @@ from invoicer_api.model.invoice import Invoice
 import sqlite3
 from fpdf import FPDF
 from authlib.integrations.flask_client import OAuth
+from functools import wraps
 import os
 
 
@@ -21,8 +22,24 @@ oauth.register(
     authorize_url="https://github.com/login/oauth/authorize",
     authorize_params=None,
     api_base_url="https://api.github.com",
-    client_kwargs={"scope": "openid profile email"}
+    client_kwargs={"scope": "profile email"} # GitHub doesn't support OIDC as of yet.
 )
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        user = dict(session).get('user_id', None)
+        if user:
+            return f(*args, **kwargs)
+        return redirect("/login")
+    return decorated_function
+
+
+@app.route('/whoami')
+@login_required
+def whoami():
+    return str(dict(session).get("user_id"))
 
 
 @app.route('/login')
@@ -35,19 +52,30 @@ def login():
 @app.route('/authorize')
 def authorize():
     github = oauth.create_client('github')
-    token = github.authorize_access_token()
-    resp = github.get('user', token=token)
+    token = github.authorize_access_token() # This internally parses the "code" request arg.
+
+    # Get user information.
+    resp = github.get('user', token=token) # Usually we would be able to get userdata here, but GitHub doesn't support OIDC.
     profile = resp.json()
-    session['profile'] = profile
-    print(f"PROFILE: {profile}")
+    user_id = profile["id"]
+    name = profile["name"]
+
+    # Create a session keyed by used_id
+    session['user_id'] = user_id
+
+    # Write/update data to user table, keyed by the ID.
+    conn = sqlite3.connect("../db/invoicer.db")
+    cur = conn.cursor()
+    cur.execute("INSERT OR REPLACE INTO user VALUES (?, ?);", (user_id, name))
+    conn.commit()
+
     return redirect('/')
 
 
 @app.route('/')
+@login_required
 def entry_point():
-    if not session.get('profile', ''):
-        return redirect('/login')
-    return f"<h1>Helllllloooooo {session['profile']['name']}!🤘</h1>"
+    return f"<h1>Hello {session['user_id']}!🤘</h1>"
 
 
 @app.route("/template", methods = ['POST'])

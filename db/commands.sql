@@ -8,3 +8,8 @@ CREATE TABLE template (
     amount REAL,
     description TEXT
 );
+
+CREATE TABLE user (
+    id INT PRIMARY KEY,
+    name TEXT
+)
