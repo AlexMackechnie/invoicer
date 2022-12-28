@@ -31,15 +31,16 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         user = dict(session).get('user_id', None)
         if user:
-            return f(*args, **kwargs)
+            return f(str(user), *args, **kwargs)
         return redirect("/login")
     return decorated_function
 
 
 @app.route('/whoami')
 @login_required
-def whoami():
-    return str(dict(session).get("user_id"))
+def whoami(user_id):
+    return user_id
+    #return str(dict(session).get("user_id"))
 
 
 @app.route('/login')
@@ -74,12 +75,13 @@ def authorize():
 
 @app.route('/')
 @login_required
-def entry_point():
-    return f"<h1>Hello {session['user_id']}!🤘</h1>"
+def entry_point(user_id):
+    return f"<h1>Hello {user_id}!🤘</h1>"
 
 
 @app.route("/template", methods = ['POST'])
-def create_template():
+@login_required
+def create_template(user_id):
     request_data = request.get_json()
     invoice = Invoice(
         request_data["name"],
@@ -92,13 +94,14 @@ def create_template():
     )
     template = Template(
         request_data["template_name"],
+        user_id,
         invoice
     )
 
     conn = sqlite3.connect("../db/invoicer.db")
     cur = conn.cursor()
 
-    cur.execute("INSERT INTO template (template_name, name, email, address, payment_details, send_to, amount, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (template.template_name, template.invoice.email, template.invoice.name, template.invoice.address, template.invoice.payment_details, template.invoice.send_to, template.invoice.amount, template.invoice.description))
+    cur.execute("INSERT INTO template (template_name, user_id, name, email, address, payment_details, send_to, amount, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (template.template_name, template.user_id, template.invoice.name, template.invoice.email, template.invoice.address, template.invoice.payment_details, template.invoice.send_to, template.invoice.amount, template.invoice.description))
 
     conn.commit()
 
@@ -106,19 +109,22 @@ def create_template():
 
 
 @app.route("/template", methods = ['GET'])
-def get_template():
+@login_required
+def get_template(user_id):
     template_name = request.args.get("template_name")
     conn = sqlite3.connect("../db/invoicer.db")
     cur = conn.cursor()
-    cur.execute("SELECT * FROM template WHERE template_name == '" + template_name + "';")
+    query = f"SELECT template_name, user_id, name, email, address, payment_details, send_to, amount, description FROM template WHERE user_id = {user_id} AND template_name = '{template_name}';"
+    cur.execute(query)
     resp = cur.fetchall()
 
-    template = Template(*resp[0])
+    template = Template(resp[0][0], resp[0][1], Invoice(*resp[0][2:]))
 
     return str(template.__dict__)
 
 
 @app.route("/invoice", methods = ['POST'])
+@login_required
 def create_invoice_from_template():
     request_data = request.get_json()
     template = Invoice(

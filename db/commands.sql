@@ -1,5 +1,6 @@
 CREATE TABLE template (
     template_name TEXT PRIMARY KEY,
+    user_id INT,
     name TEXT,
     email TEXT,
     address TEXT,

@@ -47,7 +47,7 @@ install-dev: upgrade_pip requirements.txt requirements-dev.txt pyproject.toml
 	pip install -e . --no-deps --config-settings editable_mode=strict
 
 run-dev:
-	nohup python -m flask --app invoicer_api.app run --port 5001 &
+	nohup python -u -m flask --app invoicer_api.app run --port 5001 &
 
 stop-dev:
 	pkill -f "flask --app invoicer_api.app run"
