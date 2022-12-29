@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+    <h3>Templates</h3>
+
+    {{ templates }}
+    {% for template in templates %}
+    <tr>
+        <td>{{ template["template_name"] }}</td>
+        <td>{{ template["user_id"] }}</td>
+    </tr>
+    {% endfor %}
+{% endblock %}
+
