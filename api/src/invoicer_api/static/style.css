@@ -1,0 +1,46 @@
+body {
+  font-size: 32px;
+  font-family: "Courier New", sans-serif;
+  background-color: #333;
+  color: #fff;
+}
+
+.header {
+  text-align: center;
+  font-size: 48px;
+  font-weight: bold;
+  margin: 32px 0;
+}
+
+.menu {
+  display: flex;
+  justify-content: space-around;
+  margin: 16px 0;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.menu a:hover {
+  color: #eee;
+}
+
+.content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: justify;
+  line-height: 1.5;
+  padding: 16px;
+}
+
+.footer {
+  font-size: 18px;
+  text-align: center;
+  margin: 32px 0;
+  color: #999;
+}
+
