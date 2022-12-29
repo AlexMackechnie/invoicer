@@ -6,12 +6,17 @@
 {% block content %}
     <h3>Templates</h3>
 
-    {{ templates }}
     {% for template in templates %}
-    <tr>
-        <td>{{ template["template_name"] }}</td>
-        <td>{{ template["user_id"] }}</td>
-    </tr>
+    <a href="{{ url_for('template', template_name=template['template_name'])}}"><h4>{{ template["template_name"] }}</h4></a>
+    <ul>
+        <li>{{ template["invoice"]["name"] }}</li>
+        <li>{{ template["invoice"]["email"] }}</li>
+        <li>{{ template["invoice"]["address"] }}</li>
+        <li>{{ template["invoice"]["payment_details"] }}</li>
+        <li>{{ template["invoice"]["send_to"] }}</li>
+        <li>{{ template["invoice"]["amount"] }}</li>
+        <li>{{ template["invoice"]["description"] }}</li>
+    </ul>
     {% endfor %}
 {% endblock %}
 

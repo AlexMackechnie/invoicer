@@ -1,14 +1,16 @@
 from flask import Flask, request, url_for, render_template, redirect, session
 from invoicer_api.model.template import Template
 from invoicer_api.model.invoice import Invoice
+from invoicer_api import templates
 import sqlite3
 from fpdf import FPDF
 from authlib.integrations.flask_client import OAuth
 from functools import wraps
 import os
+import pkg_resources
 
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder=templates.__path__[0])
 app.secret_key = os.environ["FLASK_APP_SECRET_KEY"]
 oauth = OAuth(app)
 
@@ -41,11 +43,15 @@ def login_required(f):
 @login_required
 def whoami(user_id):
     return user_id
-    #return str(dict(session).get("user_id"))
 
 
 @app.route('/login')
 def login():
+    return render_template("login.html")
+
+
+@app.route('/oidc-gitlab')
+def oidc_gitlab():
     gitlab = oauth.create_client('gitlab')
     redirect_uri = url_for('authorize', _external=True)
     return gitlab.authorize_redirect(redirect_uri)
@@ -74,6 +80,7 @@ def authorize():
 @app.route('/')
 @login_required
 def entry_point(user_id):
+    return render_template("root.html", user_id=user_id)
     return f"<h1>Hello {user_id}!🤘</h1>"
 
 
@@ -106,9 +113,25 @@ def create_template(user_id):
     return str(template.__dict__)
 
 
+@app.route("/templates", methods = ['GET'])
+@login_required
+def get_templates(user_id):
+    conn = sqlite3.connect("../db/invoicer.db")
+    cur = conn.cursor()
+    query = f"SELECT template_name, user_id, name, email, address, payment_details, send_to, amount, description FROM template WHERE user_id = {user_id};"
+    cur.execute(query)
+    resp = cur.fetchall()
+
+    templates = []
+    for item in resp:
+        templates.append(Template(item[0], item[1], Invoice(*item[2:])))
+
+    return render_template("templates.html", templates=templates)
+
+
 @app.route("/template", methods = ['GET'])
 @login_required
-def get_template(user_id):
+def template(user_id):
     template_name = request.args.get("template_name")
     conn = sqlite3.connect("../db/invoicer.db")
     cur = conn.cursor()
@@ -118,7 +141,7 @@ def get_template(user_id):
 
     template = Template(resp[0][0], resp[0][1], Invoice(*resp[0][2:]))
 
-    return str(template.__dict__)
+    return render_template("template.html", template=template)
 
 
 @app.route("/invoice", methods = ['POST'])
