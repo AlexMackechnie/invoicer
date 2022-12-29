@@ -14,15 +14,16 @@ oauth = OAuth(app)
 
 
 oauth.register(
-    name="github",
-    client_id="5362969895ac3af06940",
-    client_secret=os.environ["GITHUB_CLIENT_SECRET"],
-    access_token_url="https://github.com/login/oauth/access_token",
+    name="gitlab",
+    client_id="32b37fe51705ab8b60136d4e94fc60204651d09d5eb994970db30b05bfc928d4",
+    client_secret=os.environ["GITLAB_CLIENT_SECRET"],
+    access_token_url="https://gitlab.com/oauth/token",
     access_token_params=None,
-    authorize_url="https://github.com/login/oauth/authorize",
+    authorize_url="https://gitlab.com/oauth/authorize",
     authorize_params=None,
-    api_base_url="https://api.github.com",
-    client_kwargs={"scope": "profile email"} # GitHub doesn't support OIDC as of yet.
+    userinfo_endpoint="https://gitlab.com/oauth/userinfo",
+    server_metadata_url="https://gitlab.com/.well-known/openid-configuration",
+    client_kwargs={"scope": "openid"}
 )
 
 
@@ -45,29 +46,26 @@ def whoami(user_id):
 
 @app.route('/login')
 def login():
-    github = oauth.create_client('github')
+    gitlab = oauth.create_client('gitlab')
     redirect_uri = url_for('authorize', _external=True)
-    return github.authorize_redirect(redirect_uri)
+    return gitlab.authorize_redirect(redirect_uri)
 
 
 @app.route('/authorize')
 def authorize():
-    github = oauth.create_client('github')
-    token = github.authorize_access_token() # This internally parses the "code" request arg.
+    gitlab = oauth.create_client('gitlab')
+    token = gitlab.authorize_access_token() # This internally parses the "code" request arg.
 
-    # Get user information.
-    resp = github.get('user', token=token) # Usually we would be able to get userdata here, but GitHub doesn't support OIDC.
-    profile = resp.json()
-    user_id = profile["id"]
-    name = profile["name"]
+    sub = token["userinfo"]["sub"]
+    name = gitlab.userinfo()["name"]
 
-    # Create a session keyed by used_id
-    session['user_id'] = user_id
+    # Create a session keyed by sub
+    session['user_id'] = sub
 
     # Write/update data to user table, keyed by the ID.
     conn = sqlite3.connect("../db/invoicer.db")
     cur = conn.cursor()
-    cur.execute("INSERT OR REPLACE INTO user VALUES (?, ?);", (user_id, name))
+    cur.execute("INSERT OR REPLACE INTO user VALUES (?, ?);", (sub, name))
     conn.commit()
 
     return redirect('/')
