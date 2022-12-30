@@ -4,6 +4,55 @@
 {% endblock %}
 
 {% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <h3> {{ template['template_name'] }}</h3>
+
+<form id="invoice-form" method="post">
+    <label for="name">Name</label>
+    <input name="name" id="name" value="{{ template['invoice']['name'] }}" required><br/>
+
+    <label for="email">Email</label>
+    <input name="email" id="email" value="{{ template['invoice']['email'] }}" required><br/>
+
+    <label for="address">Address</label>
+    <input name="address" id="address" value="{{ template['invoice']['address'] }}" required><br/>
+
+    <label for="payment_details">Payment Details</label>
+    <input name="payment_details" id="payment_details" value="{{ template['invoice']['payment_details'] }}" required><br/>
+
+    <label for="send_to">Send To</label>
+    <input name="send_to" id="send_to" value="{{ template['invoice']['send_to'] }}" required><br/>
+
+    <label for="amount">Amount</label>
+    <input name="amount" id="amount" value="{{ template['invoice']['amount'] }}" required><br/>
+
+    <label for="description">Description</label>
+    <input name="description" id="description" value="{{ template['invoice']['description'] }}" required><br/>
+
+    <button type="button" id="invoice-button">Create Invoice!</button><br/>
+
+    <br/>
+
+    <label for="template_name">Template Name</label>
+    <input name="template_name" id="template_name"><br/>
+
+    <button type="button" id="template-button">Create Template!</button><br/>
+</form>
+
+<script>
+$(function() {
+  $('#invoice-button').click(function() {
+    $('#invoice-form').attr('action', '/invoice');
+    $('#invoice-form').submit();
+  });
+
+  $('#template-button').click(function() {
+    $('#invoice-form').attr('action', '/template');
+    $('#invoice-form').submit();
+  });
+});
+</script>
+
+
 {% endblock %}
 

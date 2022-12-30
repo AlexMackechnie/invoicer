@@ -1,4 +1,4 @@
-from flask import Flask, request, url_for, render_template, redirect, session
+from flask import Flask, request, url_for, render_template, redirect, session, send_from_directory, send_file
 from invoicer_api.model.template import Template
 from invoicer_api.model.invoice import Invoice
 from invoicer_api import templates
@@ -8,6 +8,7 @@ from authlib.integrations.flask_client import OAuth
 from functools import wraps
 import os
 import pkg_resources
+from io import BytesIO
 
 
 app = Flask(__name__, template_folder=templates.__path__[0])
@@ -81,13 +82,12 @@ def authorize():
 @login_required
 def entry_point(user_id):
     return render_template("root.html", user_id=user_id)
-    return f"<h1>Hello {user_id}!🤘</h1>"
 
 
 @app.route("/template", methods = ['POST'])
 @login_required
 def create_template(user_id):
-    request_data = request.get_json()
+    request_data = request.form
     invoice = Invoice(
         request_data["name"],
         request_data["email"],
@@ -110,7 +110,7 @@ def create_template(user_id):
 
     conn.commit()
 
-    return str(template.__dict__)
+    return redirect('/templates') 
 
 
 @app.route("/templates", methods = ['GET'])
@@ -146,8 +146,8 @@ def template(user_id):
 
 @app.route("/invoice", methods = ['POST'])
 @login_required
-def create_invoice_from_template():
-    request_data = request.get_json()
+def create_invoice(user_id):
+    request_data = request.form
     template = Invoice(
         request_data["name"],
         request_data["email"],
@@ -185,7 +185,11 @@ def create_invoice_from_template():
         """
     )
 
-    pdf.output("hello_world.pdf")
+    buffer = BytesIO()
 
-    return "DONE"
+    pdf.output(buffer, "F")
+
+    buffer.seek(0)
+
+    return send_file(buffer, as_attachment=True, download_name="invoice.pdf")
 
