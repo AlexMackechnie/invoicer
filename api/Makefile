@@ -37,6 +37,10 @@ freeze-dev: install-build-tools
 freeze-dev-upgrade: install-build-tools
 	python -m piptools compile --extra dev -o requirements-dev.txt --upgrade pyproject.toml
 
+# Build Wheel
+build: install-build-tools
+	python -m build
+
 # ------------------------------- #
 # Dev Execution Environment       #
 # ------------------------------- #
