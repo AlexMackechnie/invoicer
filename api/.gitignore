@@ -3,3 +3,4 @@ nohup.out
 build
 *egg-info*
 *.pdf*
+dist
