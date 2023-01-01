@@ -42,7 +42,7 @@ build: install-build-tools
 	python -m build
 
 # ------------------------------- #
-# Dev Execution Environment       #
+# Run Locally outside Docker      #
 # ------------------------------- #
 
 install-dev: upgrade_pip requirements.txt requirements-dev.txt pyproject.toml
@@ -50,9 +50,29 @@ install-dev: upgrade_pip requirements.txt requirements-dev.txt pyproject.toml
 	pip install -r requirements-dev.txt --compile
 	pip install -e . --no-deps --config-settings editable_mode=strict
 
-run-dev:
+run-local:
 	nohup python -u -m flask --app invoicer_api.app run --port 5001 &
 
-stop-dev:
+stop-local:
 	pkill -f "flask --app invoicer_api.app run"
+
+# ------------------------------- #
+# Build Image                     #
+# ------------------------------- #
+
+docker-build:
+	docker build -t invoicer .
+
+# ------------------------------- #
+# Run Locally inside Docker       #
+# ------------------------------- #
+
+run-docker-local:
+	docker run \
+		--rm -d \
+		-p 5001:5001 \
+		-e FLASK_APP_SECRET_KEY=${FLASK_APP_SECRET_KEY} \
+		-e GITLAB_CLIENT_SECRET=${GITLAB_CLIENT_SECRET} \
+		invoicer
+
 

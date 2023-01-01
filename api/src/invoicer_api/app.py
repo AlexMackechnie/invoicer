@@ -9,17 +9,19 @@ from functools import wraps
 import os
 import pkg_resources
 from io import BytesIO
+from invoicer_api.config import config
 
 
 app = Flask(__name__, template_folder=templates.__path__[0])
-app.secret_key = os.environ["FLASK_APP_SECRET_KEY"]
+app.config.from_mapping(config.config[os.environ["ENV"]])
+app.secret_key = app.config["FLASK_APP_SECRET_KEY"]
 oauth = OAuth(app)
 
 
 oauth.register(
     name="gitlab",
-    client_id="32b37fe51705ab8b60136d4e94fc60204651d09d5eb994970db30b05bfc928d4",
-    client_secret=os.environ["GITLAB_CLIENT_SECRET"],
+    client_id=app.config["GITLAB_CLIENT_ID"],
+    client_secret=app.config["GITLAB_CLIENT_ID"],
     access_token_url="https://gitlab.com/oauth/token",
     access_token_params=None,
     authorize_url="https://gitlab.com/oauth/authorize",
@@ -70,7 +72,7 @@ def authorize():
     session['user_id'] = sub
 
     # Write/update data to user table, keyed by the ID.
-    conn = sqlite3.connect("../db/invoicer.db")
+    conn = sqlite3.connect(app.config["SQLITE_PATH"])
     cur = conn.cursor()
     cur.execute("INSERT OR REPLACE INTO user VALUES (?, ?);", (sub, name))
     conn.commit()
@@ -103,7 +105,7 @@ def create_template(user_id):
         invoice
     )
 
-    conn = sqlite3.connect("../db/invoicer.db")
+    conn = sqlite3.connect(app.config["SQLITE_PATH"])
     cur = conn.cursor()
 
     cur.execute("INSERT INTO template (template_name, user_id, name, email, address, payment_details, send_to, amount, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (template.template_name, template.user_id, template.invoice.name, template.invoice.email, template.invoice.address, template.invoice.payment_details, template.invoice.send_to, template.invoice.amount, template.invoice.description))
@@ -116,7 +118,7 @@ def create_template(user_id):
 @app.route("/templates", methods = ['GET'])
 @login_required
 def get_templates(user_id):
-    conn = sqlite3.connect("../db/invoicer.db")
+    conn = sqlite3.connect(app.config["SQLITE_PATH"])
     cur = conn.cursor()
     query = f"SELECT template_name, user_id, name, email, address, payment_details, send_to, amount, description FROM template WHERE user_id = {user_id};"
     cur.execute(query)
@@ -133,7 +135,7 @@ def get_templates(user_id):
 @login_required
 def template(user_id):
     template_name = request.args.get("template_name")
-    conn = sqlite3.connect("../db/invoicer.db")
+    conn = sqlite3.connect(app.config["SQLITE_PATH"])
     cur = conn.cursor()
     query = f"SELECT template_name, user_id, name, email, address, payment_details, send_to, amount, description FROM template WHERE user_id = {user_id} AND template_name = '{template_name}';"
     cur.execute(query)
