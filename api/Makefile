@@ -63,6 +63,10 @@ stop-local:
 docker-build:
 	docker build -t invoicer .
 
+docker-clean:
+	docker container stop invoicer || true
+	docker image rm -f invoicer || true
+
 # ------------------------------- #
 # Run Locally inside Docker       #
 # ------------------------------- #
@@ -71,8 +75,13 @@ run-docker-local:
 	docker run \
 		--rm -d \
 		-p 5001:5001 \
+		-v ${SQLITE_PATH}:/db/invoicer.db \
 		-e FLASK_APP_SECRET_KEY=${FLASK_APP_SECRET_KEY} \
 		-e GITLAB_CLIENT_SECRET=${GITLAB_CLIENT_SECRET} \
+		--name invoicer \
 		invoicer
+
+stop-docker-local:
+	docker container stop invoicer
 
 
