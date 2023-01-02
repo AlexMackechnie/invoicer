@@ -21,7 +21,7 @@ oauth = OAuth(app)
 oauth.register(
     name="gitlab",
     client_id=app.config["GITLAB_CLIENT_ID"],
-    client_secret=app.config["GITLAB_CLIENT_ID"],
+    client_secret=app.config["GITLAB_CLIENT_SECRET"],
     access_token_url="https://gitlab.com/oauth/token",
     access_token_params=None,
     authorize_url="https://gitlab.com/oauth/authorize",

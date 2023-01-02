@@ -78,7 +78,6 @@ run-local-docker:
 		-p 5001:5001 \
 		-v ${SQLITE_PATH}:/db/invoicer.db \
 		-e ENV="local-docker" \
-		-e SQLITE_PATH=${SQLITE_PATH} \
 		-e FLASK_APP_SECRET_KEY=${FLASK_APP_SECRET_KEY} \
 		-e GITLAB_CLIENT_SECRET=${GITLAB_CLIENT_SECRET} \
 		--name invoicer \
