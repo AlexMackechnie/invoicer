@@ -135,15 +135,19 @@ def get_templates(user_id):
 @login_required
 def template(user_id):
     template_name = request.args.get("template_name")
-    conn = sqlite3.connect(app.config["SQLITE_PATH"])
-    cur = conn.cursor()
-    query = f"SELECT template_name, user_id, name, email, address, payment_details, send_to, amount, description FROM template WHERE user_id = {user_id} AND template_name = '{template_name}';"
-    cur.execute(query)
-    resp = cur.fetchall()
+    if template_name:
+        conn = sqlite3.connect(app.config["SQLITE_PATH"])
+        cur = conn.cursor()
+        query = f"SELECT template_name, user_id, name, email, address, payment_details, send_to, amount, description FROM template WHERE user_id = {user_id} AND template_name = '{template_name}';"
+        cur.execute(query)
+        resp = cur.fetchall()
 
-    template = Template(resp[0][0], resp[0][1], Invoice(*resp[0][2:]))
+        template = Template(resp[0][0], resp[0][1], Invoice(*resp[0][2:]))
 
-    return render_template("template.html", template=template)
+        return render_template("template.html", template=template)
+    else:
+        template = Template("", "", Invoice("", "", "", "", "", "", ""))
+        return render_template("template.html", template=template)
 
 
 @app.route("/invoice", methods = ['POST'])

@@ -4,3 +4,4 @@ build
 *egg-info*
 *.pdf*
 dist
+.DS_Store
