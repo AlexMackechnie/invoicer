@@ -5,7 +5,15 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-wheel:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      working-directory: ./api
+      run: python -m build
+
+  build-image:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
