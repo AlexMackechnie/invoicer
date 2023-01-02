@@ -51,7 +51,7 @@ install-dev: upgrade_pip requirements.txt requirements-dev.txt pyproject.toml
 	pip install -e . --no-deps --config-settings editable_mode=strict
 
 run-local:
-	nohup python -u -m flask --app invoicer_api.app run --port 5001 &
+	ENV=local nohup python -u -m flask --app invoicer_api.app run --port 5001 &
 
 stop-local:
 	pkill -f "flask --app invoicer_api.app run"
@@ -60,10 +60,10 @@ stop-local:
 # Build Image                     #
 # ------------------------------- #
 
-docker-build: build
+build-docker: build
 	docker build -t invoicer .
 
-docker-clean:
+clean-docker:
 	rm -rf build dist
 	docker container stop invoicer || true
 	docker image rm -f invoicer || true
@@ -72,19 +72,18 @@ docker-clean:
 # Run Locally inside Docker       #
 # ------------------------------- #
 
-run-docker-local:
+run-local-docker:
 	docker run \
 		--rm -d \
 		-p 5001:5001 \
 		-v ${SQLITE_PATH}:/db/invoicer.db \
-		-e ENV=${ENV} \
+		-e ENV="local-docker" \
 		-e SQLITE_PATH=${SQLITE_PATH} \
 		-e FLASK_APP_SECRET_KEY=${FLASK_APP_SECRET_KEY} \
 		-e GITLAB_CLIENT_SECRET=${GITLAB_CLIENT_SECRET} \
 		--name invoicer \
 		invoicer
 
-stop-docker-local:
+stop-local-docker:
 	docker container stop invoicer
-
 
