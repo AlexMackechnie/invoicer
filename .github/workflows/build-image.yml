@@ -19,11 +19,6 @@ jobs:
         source venv/bin/activate
         pip install build
         python -m build
-
-  build-image:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
     - name: Build the Docker image
       working-directory: ./api
       run: docker build . --file Dockerfile --tag invoicer:$(date +%s)
