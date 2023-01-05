@@ -35,7 +35,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images: gchr.io/invoicer
+        images: gchr.io/${{ github.repository }}
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
