@@ -33,6 +33,6 @@ jobs:
       uses: docker/build-push-action@v3
       working-directory: ./api
       with:
-        context: .
+        context: ./api/.
         push: true
         tags: alexmackechnie/invoicer:latest
