@@ -31,7 +31,6 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
-      working-directory: ./api
       with:
         context: ./api/.
         push: true
