@@ -37,7 +37,7 @@ jobs:
       with:
         images: gchr.io/${{ github.repository }}
     - name: Build and push Docker image
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
       with:
         context: ./api/.
         push: true
