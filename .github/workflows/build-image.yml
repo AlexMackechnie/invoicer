@@ -29,9 +29,9 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Build and push the Docker image
-        working-directory: ./api
-        run: |
-          TAG=$(date +%s)
-          docker build . --file Dockerfile --tag ghcr.io/alexmackechnie/invoicer:${TAG}
-          docker push ghcr.io/alexmackechnie/invoicer:${TAG}
+      working-directory: ./api
+      run: |
+        TAG=$(date +%s)
+        docker build . --file Dockerfile --tag ghcr.io/alexmackechnie/invoicer:${TAG}
+        docker push ghcr.io/alexmackechnie/invoicer:${TAG}
 
