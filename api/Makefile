@@ -86,3 +86,18 @@ run-local-docker:
 stop-local-docker:
 	docker container stop invoicer
 
+# ------------------------------- #
+# Run in Prod inside Docker       #
+# ------------------------------- #
+
+run-prod-docker:
+	docker run \
+		--rm -d \
+		-p 5001:5001 \
+		-v /db/invoicer.db:/db/invoicer.db \
+		-e ENV="prod" \
+		-e FLASK_APP_SECRET_KEY=${FLASK_APP_SECRET_KEY} \
+		-e GITLAB_CLIENT_SECRET=${GITLAB_CLIENT_SECRET} \
+		--name invoicer \
+		ghcr.io/alexmackechnie/invoicer:1673040893
+
