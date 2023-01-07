@@ -9,8 +9,17 @@ COPY requirements.txt /app/requirements.txt
 COPY dist/invoicer_api-0.0.1-py3-none-any.whl /app/invoicer_api-0.0.1-py3-none-any.whl
 
 RUN apt-get update -y
-RUN apt-get install gcc -y # gcc required to build uwsgi
+RUN apt-get install \
+    gcc \
+    libssl-dev \
+    -y # gcc required to build uwsgi
 RUN pip install -r requirements.txt --compile
 RUN pip install invoicer_api-0.0.1-py3-none-any.whl --no-deps --compile
 
-CMD ["uwsgi", "--socket", "0.0.0.0:5001", "--protocol", "http", "--module", "invoicer_api.app:app", "--python-path", "./venv/bin/python"]
+CMD uwsgi \
+    --socket 0.0.0.0:5001 \
+    --protocol http \
+    --module invoicer_api.app:app \
+    --python-path ./venv/bin/python \
+    --ssl-key ${SSL_KEY_PATH} \
+    --ssl-cert ${SSL_CERT_PATH}
