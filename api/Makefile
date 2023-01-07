@@ -95,6 +95,8 @@ run-prod-docker:
 		--rm -d \
 		-p 5001:5001 \
 		-v /db/invoicer.db:/db/invoicer.db \
+		-v ${SSL_CERT_PATH}:/ssl/fullchain.pem \
+		-v ${SSL_KEY_PATH}:/ssl/privkey.pem \
 		-e ENV="prod" \
 		-e FLASK_APP_SECRET_KEY=${FLASK_APP_SECRET_KEY} \
 		-e GITLAB_CLIENT_SECRET=${GITLAB_CLIENT_SECRET} \

@@ -12,6 +12,8 @@ RUN apt-get update -y
 RUN apt-get install \
     gcc \
     libssl-dev \
+    libpcre3 \
+    libpcre3-dev \
     -y # gcc required to build uwsgi
 RUN pip install -r requirements.txt --compile
 RUN pip install invoicer_api-0.0.1-py3-none-any.whl --no-deps --compile
@@ -21,4 +23,4 @@ CMD uwsgi \
     --protocol http \
     --module invoicer_api.app:app \
     --python-path ./venv/bin/python \
-    --https =0,${SSL_CERT_PATH},${SSL_KEY_PATH},HIGH
+    --https =0,/ssl/fullchain.pem,/ssl/privkey.pem,HIGH
