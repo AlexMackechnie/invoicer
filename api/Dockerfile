@@ -21,5 +21,4 @@ CMD uwsgi \
     --protocol http \
     --module invoicer_api.app:app \
     --python-path ./venv/bin/python \
-    --ssl-key ${SSL_KEY_PATH} \
-    --ssl-cert ${SSL_CERT_PATH}
+    --https =0,${SSL_CERT_PATH},${SSL_KEY_PATH},HIGH
