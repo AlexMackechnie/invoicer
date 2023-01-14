@@ -26,16 +26,16 @@ clean:
 # Freezing Dependencies
 
 freeze: install-build-tools
-	python -m piptools compile -o requirements.txt pyproject.toml
+	python -m piptools compile -o requirements.txt pyproject.toml --generate-hashes
 
 freeze-upgrade: install-build-tools
-	python -m piptools compile -o requirements.txt --upgrade pyproject.toml
+	python -m piptools compile -o requirements.txt --upgrade pyproject.toml --generate-hashes
 
 freeze-dev: install-build-tools
-	python -m piptools compile --extra dev -o requirements-dev.txt pyproject.toml
+	python -m piptools compile --extra dev -o requirements-dev.txt pyproject.toml --generate-hashes
 
 freeze-dev-upgrade: install-build-tools
-	python -m piptools compile --extra dev -o requirements-dev.txt --upgrade pyproject.toml
+	python -m piptools compile --extra dev -o requirements-dev.txt --upgrade pyproject.toml --generate-hashes
 
 # Build Wheel
 build: install-build-tools

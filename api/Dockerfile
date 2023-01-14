@@ -23,4 +23,3 @@ CMD uwsgi \
     --protocol http \
     --module invoicer_api.app:app \
     --python-path ./venv/bin/python \
-    --https =0,/ssl/fullchain.pem,/ssl/privkey.pem,HIGH
