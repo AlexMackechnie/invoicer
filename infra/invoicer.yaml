@@ -1,0 +1,8 @@
+---
+- name: InvoicerPlaybook
+  hosts: all
+  vars:
+    ansible_hosts_file: "./hosts"
+  roles:
+    - docker
+    - nginx

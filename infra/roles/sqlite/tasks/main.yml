@@ -1,0 +1,13 @@
+- name: Update apt and install sqlite3
+  ansible.builtin.file:
+    path: /db
+    state: directory
+    mode: "0775"
+    owner: "sqlite"
+    group: "sqlite"
+
+- name: Update apt and install sqlite3
+  ansible.builtin.apt:
+    name: nginx
+    state: 5:20.10.22~3-0~ubuntu-focal
+    update_cache: true
