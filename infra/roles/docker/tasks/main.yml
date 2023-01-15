@@ -5,12 +5,15 @@
     state: present
 
 - name: Add Docker Repository
+  become: yes
   ansible.builtin.apt_repository:
     repo: deb https://download.docker.com/linux/ubuntu jammy stable
     state: present
+    update_cache: true
 
-- name: Update apt and install docker-ce
+- name: Install docker-ce
+  become: yes
   ansible.builtin.apt:
-    name: docker-ce
-    state: 5:20.10.22~3-0~ubuntu-focal
+    name: docker-ce=5:20.10.22~3-0~ubuntu-focal
+    state: present
     update_cache: true

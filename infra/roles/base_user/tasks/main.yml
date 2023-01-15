@@ -13,4 +13,10 @@
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
     state: present
 
+- name: Set NOPASSWD option for members of the sudo group.
+  lineinfile:
+    path: /etc/sudoers
+    line: "%sudo  ALL=(ALL:ALL) NOPASSWD: ALL"
+    state: present
+
 # Need to also lock down the root user here.
