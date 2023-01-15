@@ -1,0 +1,7 @@
+---
+- name: AnsibleSetupPlaybook
+  hosts: all
+  vars:
+    ansible_hosts_file: "./hosts"
+  roles:
+    - base_user
