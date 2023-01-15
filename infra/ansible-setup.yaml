@@ -1,7 +1,9 @@
 ---
 - name: AnsibleSetupPlaybook
   hosts: all
+  remote_user: root
   vars:
+    ansible_connection: ssh
     ansible_hosts_file: "./hosts"
   roles:
     - base_user

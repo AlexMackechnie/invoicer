@@ -1,7 +1,9 @@
 ---
 - name: InvoicerPlaybook
   hosts: all
+  remote_user: ansible
   vars:
+    ansible_connection: ssh
     ansible_hosts_file: "./hosts"
   roles:
     - docker
