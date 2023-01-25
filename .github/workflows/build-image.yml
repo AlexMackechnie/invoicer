@@ -32,6 +32,6 @@ jobs:
       working-directory: ./api
       run: |
         TAG=$(date +%s)
-        docker build . --file Dockerfile --tag ghcr.io/alexmackechnie/invoicer:${TAG}
-        docker push ghcr.io/alexmackechnie/invoicer:${TAG}
+        docker build . --file Dockerfile --tag ghcr.io/alexmackechnie/invoicer:${TAG} --tag ghcr.io/alexmackechnie/invoicer:latest
+        docker push ghcr.io/alexmackechnie/invoicer --all-tags
 

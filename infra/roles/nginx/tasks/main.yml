@@ -1,5 +1,6 @@
-- name: Update apt and install nginx
+- name: Install nginx
+  become: yes
   ansible.builtin.apt:
     name: nginx
-    state: 5:20.10.22~3-0~ubuntu-focal
+    state: present
     update_cache: true
