@@ -27,8 +27,10 @@
     shell: /bin/bash
     password: "*" # Lock the account, allowing access only through SSH.
 
-- name: pull an image
+- name: Pull application image
+  become: yes
   docker_image:
-    name: pacur/centos-7
+    name: ghcr.io/alexmackechnie/invoicer:latest
     source: pull
+  notify: Start Docker CE
 
