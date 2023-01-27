@@ -4,3 +4,20 @@
     name: docker
     state: started
     user: docker
+
+- name: Start Container
+  docker_container: 
+    name: invoicer
+    image: ghcr.io/alexmackechnie/invoicer:latest
+    state: started
+    auto_remove: yes
+    detach: yes
+    ports:
+      - "5001:5001"
+    volumes:
+      - "/db/invoicer.db:/db/invoicer.db"
+    env:
+      - "ENV=prod"
+      - "FLASK_APP_SECRET_KEY="
+      - "GITLAB_CLIENT_SECRET="
+
