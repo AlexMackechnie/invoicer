@@ -13,4 +13,4 @@ CREATE TABLE template (
 CREATE TABLE user (
     id INT PRIMARY KEY,
     name TEXT
-)
+);
