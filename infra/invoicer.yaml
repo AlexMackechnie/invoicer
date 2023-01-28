@@ -6,5 +6,6 @@
     ansible_connection: ssh
     ansible_hosts_file: "./hosts"
   roles:
+    - sqlite
     - docker
     - nginx

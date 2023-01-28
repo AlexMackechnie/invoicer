@@ -1,13 +1,25 @@
-- name: Update apt and install sqlite3
-  ansible.builtin.file:
-    path: /db
-    state: directory
-    mode: "0775"
-    owner: "sqlite"
-    group: "sqlite"
-
-- name: Update apt and install sqlite3
+---
+- name: Install sqlite3
   ansible.builtin.apt:
-    name: nginx
-    state: 5:20.10.22~3-0~ubuntu-focal
-    update_cache: true
+    name: sqlite3
+    state: present
+
+- name: Create invoicer DB
+  shell: |
+    sqlite3 /db/invoicer.db <<EOF
+      CREATE TABLE IF NOT EXISTS template (
+          template_name TEXT PRIMARY KEY,
+          user_id INT,
+          name TEXT,
+          email TEXT,
+          address TEXT,
+          payment_details TEXT,
+          send_to TEXT,
+          amount REAL,
+          description TEXT
+      );
+      CREATE TABLE IF NOT EXISTS user (
+          id INT PRIMARY KEY,
+          name TEXT
+      );
+    EOF
