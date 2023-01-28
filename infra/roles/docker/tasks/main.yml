@@ -42,7 +42,7 @@
 - name: Start Container
   become: yes
   ansible.builtin.shell: |
-    . /sec/setup.sh
+    . /sec/sec.sh
     docker stop invoicer || true
     docker run \
       --rm -d \
