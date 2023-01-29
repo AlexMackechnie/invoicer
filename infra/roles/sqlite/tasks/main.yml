@@ -4,6 +4,11 @@
     name: sqlite3
     state: present
 
+- name: Create /db directory
+  file:
+    path: /db
+    state: directory
+
 - name: Create invoicer DB
   shell: |
     sqlite3 /db/invoicer.db <<EOF

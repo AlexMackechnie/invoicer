@@ -4,3 +4,22 @@
     name: nginx
     state: present
     update_cache: true
+
+- name: Copy nginx config file
+  copy:
+    src: invoicer.conf
+    dest: /etc/nginx/sites-available/invoicer
+    mode: 0644
+
+- name: Relink the sites-available directory
+  file:
+    src: /etc/nginx/sites-available/invoicer
+    dest: /etc/nginx/sites-enabled/invoicer
+    state: link
+
+- name: Restart nginx
+  service:
+    name: nginx
+    state: restarted
+  tags:
+    - always
