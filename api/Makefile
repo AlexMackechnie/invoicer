@@ -50,6 +50,9 @@ install-dev: upgrade_pip requirements.txt requirements-dev.txt pyproject.toml
 	pip install -r requirements-dev.txt --compile
 	pip install -e . --no-deps --config-settings editable_mode=strict
 
+sqlite:
+	sqlite3 invoicer.db < ../infra/roles/sqlite/files/bootstrap.sql
+
 run-local:
 	ENV=local nohup python -u -m flask --app invoicer_api.app run --port 5001 &
 
